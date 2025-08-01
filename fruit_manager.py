@@ -30,8 +30,10 @@ def vendre(inventaire, fruit, quantite):
 
 
 if __name__ == "__main__":
+    inventaire = ouvrir_inventaire()
     afficher_inventaire(inventaire)
     recolter(inventaire, "bananes", 10)
     vendre(inventaire, "bananes", 5)
     afficher_inventaire(inventaire)
+    ecrire_inventaire(inventaire)
     
