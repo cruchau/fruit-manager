@@ -1,5 +1,11 @@
 import json
 
+def ouvrir_prix(path="data/prix.json"):
+    with open(path, 'r', encoding='utf-8') as fichier:
+        prix = json.load(fichier)
+    return prix
+
+
 def ouvrir_inventaire(path="data/inventaire.json"):
     with open(path, 'r', encoding='utf-8') as fichier:
         inventaire = json.load(fichier)
@@ -37,10 +43,10 @@ def recolter(inventaire, fruit, quantite):
     print(f"\n Recolte {quantite} {fruit} supplementaire")
 
 
-def vendre(inventaire, fruit, quantite, tresorerie):
+def vendre(inventaire, fruit, quantite, tresorerie, prix):
     if inventaire.get(fruit, 0) >= quantite:
         inventaire[fruit] -= quantite
-        tresorerie += 1 * quantite
+        tresorerie += prix.get(fruit, 0) * quantite
         print(f"\n Vendue {quantite} {fruit} !")
         return (inventaire, tresorerie)
     else:
@@ -50,11 +56,13 @@ def vendre(inventaire, fruit, quantite, tresorerie):
 if __name__ == "__main__":
     inventaire = ouvrir_inventaire()
     tresorerie = ouvrir_tresorerie()
+    prix = ouvrir_prix()
+    
     afficher_inventaire(inventaire)
     afficher_tresorerie(tresorerie)
     
     recolter(inventaire, "bananes", 10)
-    inventaire, tresorerie = vendre(inventaire, "bananes", 5, tresorerie)
+    inventaire, tresorerie = vendre(inventaire, "bananes", 5, tresorerie, prix)
     
     ecrire_inventaire(inventaire)
     ecrire_tresorerie(tresorerie)
