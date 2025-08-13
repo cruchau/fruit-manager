@@ -83,6 +83,17 @@ def vendre(inventaire, fruit, quantite, tresorerie, prix):
         return (inventaire, tresorerie)
     else:
         print(f"Pas assez de {fruit} pour vendre {quantite} unites.")
+        
+
+def vendre_tout(inventaire, tresorerie, prix):
+    print("\n🛒 Vente de tout l'inventaire :")
+    for fruit, quantite in list(inventaire.items()):
+        if quantite > 0:
+            revenu = prix.get(fruit, 0) * quantite
+            tresorerie += revenu
+            print(f"- {fruit.capitalize()} : vendu {quantite} unites pour {revenu:.2f} $")
+            inventaire[fruit] = 0
+    return inventaire, tresorerie
 
 
 if __name__ == "__main__":
