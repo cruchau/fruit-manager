@@ -33,7 +33,7 @@ st.table(inventaire)
 # Inventaire sous forme de graphique
 fig, ax = plt.subplots()
 # Trier l'inventaire par quantite decroissante
-inventaire = dict(sorted(inventaire.item(), key=lambda item: item[1], reverse=True))
+inventaire = dict(sorted(inventaire.items(), key=lambda item: item[1], reverse=True))
 ax.bar(inventaire.keys(), inventaire.values(), edgecolor='k')
 ax.set_xlabel("Fruits")
 ax.set_ylabel("Quantité")
