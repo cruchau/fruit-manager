@@ -24,7 +24,11 @@ with st.sidebar:
     
     if st.button("Récolter"):
         inventaire = recolter(inventaire, fruit_recolter, quantite_recolter)
-        #ecrire_inventaire(inventaire)
+        if inventaire:  # Vérifier que l'inventaire est valide
+            ecrire_inventaire(inventaire)
+        else:
+            st.error("Erreur lors de la récolte")
+
         
 st.header("💰 Tresorerie")
 st.metric(label="Montant disponible", value=f"{tresorerie:.2f} $")

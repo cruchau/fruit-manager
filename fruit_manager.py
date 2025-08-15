@@ -8,8 +8,6 @@ INVENTAIRE_PATH = os.path.join(DATA_DIR, "inventaire.json")
 TRESORERIE_PATH = os.path.join(DATA_DIR, "tresorerie.txt")
 
 
-
-
 def enregistrer_tresorerie_historique(tresorerie, path="data/tresorerie_history.json"):
     historique = []
     if os.path.exists(path):
@@ -42,7 +40,7 @@ def ouvrir_prix(path=PRIX_PATH):
             "noix de coco": 4,
             "papayes": 3
         }
-        with open(path, 'r', encoding='utf-8') as fichier:
+        with open(path, 'w', encoding='utf-8') as fichier:
             json.dump(prix_defaut, fichier, ensure_ascii=False, indent=4)
     with open(path, 'r', encoding='utf-8') as fichier:
         return json.load(fichier)
@@ -97,21 +95,45 @@ def afficher_inventaire(inventaire):
   
         
 def recolter(inventaire, fruit, quantite):
-    inventaire[fruit] = inventaire.get(fruit,0) + quantite # r returns the value for the specified key if the key exists in the dictionary
-    print(f"\n🍂 Recolte {quantite} {fruit} supplementaire")
+    try:
+        # Validate input inventory
+        if inventaire is None:
+            inventaire = ouvrir_inventaire()  # Charger l'inventaire existant au lieu d'en créer un nouveau vide
+            
+        if not isinstance(inventaire, dict):
+            print("Warning: inventaire was not a dictionary")
+            inventaire = ouvrir_inventaire()
+            
+        # Update inventory
+        inventaire[fruit] = inventaire.get(fruit, 0) + quantite
+        
+        # Save immediately after update
+        ecrire_inventaire(inventaire)
+        print(f"\n🍂 Recolte {quantite} {fruit} supplementaire")
+        
+        # Debug print
+        print("Updated inventory:", inventaire)
+        
+        return inventaire    
+        
+    except Exception as e:
+        print(f"Erreur lors de la récolte: {e}")
+        return ouvrir_inventaire()  # Retourner l'inventaire existant en cas d'erreur
+
 
 
 def vendre(inventaire, fruit, quantite, tresorerie, prix):
     if inventaire.get(fruit, 0) >= quantite:
         inventaire[fruit] -= quantite
         tresorerie += prix.get(fruit, 0) * quantite
-        message = {'status' : 'success', 'text' : f"\n Vendu {quantite} {fruit} !"}
+        message = {'status': 'success', 'text': f"\n Vendu {quantite} {fruit} !"}
         enregistrer_tresorerie_historique(tresorerie)
         print(f"\n Vendue {quantite} {fruit} !")
-        return (inventaire, tresorerie, message)
+        return inventaire, tresorerie  # Retourner seulement inventaire et tresorerie
     else:
-        message = {'status' : 'error', 'text' : f"\n Pas assez  de {fruit} pour  en vendre {quantite} !"}
-        return (inventaire, tresorerie, message)
+        message = {'status': 'error', 'text': f"\n Pas assez de {fruit} pour en vendre {quantite} !"}
+        return inventaire, tresorerie  # Retourner les valeurs inchangées
+
         
 
 def vendre_tout(inventaire, tresorerie, prix):
